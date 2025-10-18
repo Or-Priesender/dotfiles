@@ -43,6 +43,34 @@ for file in "${files[@]}"; do
     fi
 done
 
+# Handle .config directories
+echo -e "${GREEN}Setting up .config directories...${NC}"
+mkdir -p "$HOME/.config"
+
+config_dirs=("aerospace" "k9s" "lazygit" "tmux" "sketchybar" "tms" "iterm2" "gh-dash" "nvim")
+
+for config_dir in "${config_dirs[@]}"; do
+    source_dir="$DOTFILES_DIR/config/$config_dir"
+    target_dir="$HOME/.config/$config_dir"
+
+    if [ -d "$source_dir" ] || [ -L "$source_dir" ]; then
+        # Backup existing directory if it exists and is not already a symlink
+        if [ -e "$target_dir" ] && [ ! -L "$target_dir" ]; then
+            echo -e "${YELLOW}Backing up existing .config/$config_dir${NC}"
+            mv "$target_dir" "$BACKUP_DIR/"
+        elif [ -L "$target_dir" ]; then
+            echo -e "${YELLOW}Removing existing symlink .config/$config_dir${NC}"
+            rm "$target_dir"
+        fi
+
+        # Create symlink
+        echo -e "${GREEN}Creating symlink for .config/$config_dir${NC}"
+        ln -s "$source_dir" "$target_dir"
+    else
+        echo -e "${RED}Warning: $source_dir not found, skipping${NC}"
+    fi
+done
+
 # Handle .secrets separately (copy template, don't symlink)
 if [ ! -f "$HOME/.secrets" ]; then
     echo -e "${YELLOW}Creating .secrets from template...${NC}"
@@ -58,6 +86,12 @@ if [ -z "$(ls -A $BACKUP_DIR)" ]; then
     echo -e "${GREEN}No backups needed${NC}"
 else
     echo -e "${YELLOW}Backups saved to: $BACKUP_DIR${NC}"
+fi
+
+# Initialize git submodules (for nvim config)
+if [ -f "$DOTFILES_DIR/.gitmodules" ]; then
+    echo -e "${GREEN}Initializing git submodules...${NC}"
+    git -C "$DOTFILES_DIR" submodule update --init --recursive
 fi
 
 echo -e "${GREEN}Dotfiles installation complete!${NC}"

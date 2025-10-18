@@ -18,3 +18,17 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Sensitive .config directories (contain credentials/tokens/state)
+config/gcloud/
+config/gh/
+config/github-copilot/
+config/atuin/
+config/configstore/
+config/git/
+config/raycast/
+config/telepresence/
+config/jgit/
+
+# Socket files
+*.socket

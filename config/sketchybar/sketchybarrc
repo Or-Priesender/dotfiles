@@ -1,0 +1,216 @@
+# Plugins
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# Tokens
+source "$CONFIG_DIR/tokens/gruvbox_colors.sh"
+
+# Defaults
+default=(
+	icon.font="Apple Symbols"
+	label.font="JetBrains Mono"
+	icon.color=$GRUVBOX_FG1
+	label.color=$GRUVBOX_FG1
+)
+
+sketchybar --default "${default[@]}"
+
+# Bar Appearance
+sketchybar --bar position=top height=32 color=$COLOR_TRANSPARENT
+
+# Workspaces
+workspaces=$(aerospace list-workspaces --monitor all --empty no)
+first_workspace=$(echo "$workspaces" | head -n 1)
+last_workspace=$(echo "$workspaces" | tail -n 1)
+
+for sid in $workspaces; do
+	sketchybar --add item space.$sid left \
+		--set space.$sid \
+      background.color=$GRUVBOX_ORANGE \
+      background.corner_radius=2 \
+      background.height=20 \
+      background.drawing=off \
+      label.align=center \
+      label.width=20 \
+      label="$sid" \
+      click_script="aerospace workspace $sid; $CONFIG_DIR/plugins/aerospace.sh"
+done
+
+# Add a single event handler for workspace changes
+sketchybar --add event aerospace_workspace_change
+sketchybar --add item aerospace_handler left \
+  --set aerospace_handler \
+    script="$CONFIG_DIR/plugins/aerospace.sh" \
+    drawing=off \
+  --subscribe aerospace_handler aerospace_workspace_change
+
+sketchybar --set space.$first_workspace padding_left=2
+
+sketchybar --set space.$last_workspace padding_right=2
+
+sketchybar --add bracket spaces '/space\..*/' \
+	--set spaces background.color=$GRUVBOX_BG1_75 \
+		background.corner_radius=4 \
+		background.height=24 \
+		background.border_width=1 \
+		background.border_color=$GRUVBOX_YELLOW
+
+# Front App (Center)
+sketchybar --add item front_app center \
+  --set front_app \
+    background.color=$GRUVBOX_BG1_75 \
+    background.corner_radius=4 \
+    background.height=24 \
+    background.border_width=1 \
+    background.border_color=$GRUVBOX_BLUE \
+    label.padding_left=8 \
+    label.padding_right=8 \
+    update_freq=2 \
+    script="$PLUGIN_DIR/front_app.sh"
+
+# Language
+sketchybar --add item language right \
+  --set language \
+    background.color=$GRUVBOX_BG1_75 \
+    background.corner_radius=4 \
+    background.height=24 \
+    background.border_width=1 \
+    background.border_color=$GRUVBOX_PURPLE \
+    label.padding_left=8 \
+    label.padding_right=8 \
+    update_freq=2 \
+    script="$PLUGIN_DIR/language.sh"
+
+# Spacer
+sketchybar --add item spacer_lang right \
+  --set spacer_lang width=8
+
+# Volume
+sketchybar --add item volume right \
+  --set volume \
+    background.color=$GRUVBOX_BG1_75 \
+    background.corner_radius=4 \
+    background.height=24 \
+    background.border_width=1 \
+    background.border_color=$GRUVBOX_AQUA \
+    icon.padding_left=8 \
+    label.padding_right=8 \
+    update_freq=2 \
+    script="$PLUGIN_DIR/volume.sh"
+
+# Spacer
+sketchybar --add item spacer_vol right \
+  --set spacer_vol width=8
+
+# Battery
+sketchybar --add item battery right \
+  --set battery \
+    background.color=$GRUVBOX_BG1_75 \
+    background.corner_radius=4 \
+    background.height=24 \
+    background.border_width=1 \
+    background.border_color=$GRUVBOX_GREEN \
+    icon.padding_left=8 \
+    label.padding_right=8 \
+    update_freq=120 \
+    script="$PLUGIN_DIR/battery.sh"
+
+# Spacer
+sketchybar --add item spacer_bat right \
+  --set spacer_bat width=8
+
+# Clock
+sketchybar --add item clock right \
+	--set clock \
+		background.color=$GRUVBOX_BG1_75 \
+		background.corner_radius=4 \
+		background.height=24 \
+		background.border_width=1 \
+		background.border_color=$GRUVBOX_YELLOW \
+		label.padding_left=8 \
+		label.padding_right=8 \
+		update_freq=10 \
+		script="$PLUGIN_DIR/clock.sh"
+
+# Spacer 1
+sketchybar --add item spacer_1 right \
+  --set spacer_1 width=8
+
+# Disk
+sketchybar --add item disk.number right \
+	--set disk.number \
+    label.padding_right=8 \
+		update_freq=10 \
+		script="$PLUGIN_DIR/disk.sh"
+
+sketchybar --add item disk.label right \
+	--set disk.label \
+		label="DISK:" \
+		label.padding_left=8 \
+    label.padding_right=4 \
+		label.color=$GRUVBOX_YELLOW
+
+sketchybar --add bracket disk disk.number disk.label \
+	--set disk \
+		background.color=$GRUVBOX_BG1_75 \
+		background.corner_radius=4 \
+		background.height=24 \
+		background.border_width=1 \
+		background.border_color=$GRUVBOX_YELLOW \
+		padding_left=8
+
+# Spacer 2
+sketchybar --add item spacer_2 right \
+  --set spacer_2 width=8
+
+# RAM
+sketchybar --add item ram.number right \
+	--set ram.number \
+    label.padding_right=8 \
+		update_freq=2 \
+		script="$PLUGIN_DIR/ram.sh"
+
+sketchybar --add item ram.label right \
+	--set ram.label \
+		label="RAM:" \
+		label.padding_left=8 \
+    label.padding_right=4 \
+		label.color=$GRUVBOX_YELLOW
+
+sketchybar --add bracket ram ram.number ram.label \
+	--set ram \
+		background.color=$GRUVBOX_BG1_75 \
+		background.corner_radius=4 \
+		background.height=24 \
+		background.border_width=1 \
+		background.border_color=$GRUVBOX_YELLOW \
+		padding_left=8
+
+# Spacer 3
+sketchybar --add item spacer_3 right \
+  --set spacer_3 width=8
+
+# CPU
+sketchybar --add item cpu.number right \
+	--set cpu.number \
+    label.padding_right=8 \
+		update_freq=2 \
+		script="$PLUGIN_DIR/cpu.sh"
+
+sketchybar --add item cpu.label right \
+	--set cpu.label \
+		label="CPU:" \
+		label.padding_left=8 \
+    label.padding_right=4 \
+		label.color=$GRUVBOX_YELLOW
+
+sketchybar --add bracket cpu cpu.number cpu.label \
+	--set cpu \
+		background.color=$GRUVBOX_BG1_75 \
+		background.corner_radius=4 \
+		background.height=24 \
+		background.border_width=1 \
+		background.border_color=$GRUVBOX_YELLOW \
+		padding_left=8
+
+# Force all scripts to run the first time (never do this in a script)
+sketchybar --update

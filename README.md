@@ -10,6 +10,16 @@ Personal configuration files for macOS development environment.
 - `.gitattributes` - Git attributes configuration
 - `.secrets.template` - Template for environment variables (API keys, tokens)
 - `install.sh` - Installation script that creates symlinks
+- `config/` - Application configuration directories from `~/.config/`
+  - `nvim/` - Neovim configuration (git submodule)
+  - `tmux/` - Tmux configuration
+  - `k9s/` - Kubernetes UI configuration
+  - `lazygit/` - LazyGit configuration
+  - `aerospace/` - Window manager configuration
+  - `sketchybar/` - macOS status bar configuration
+  - `iterm2/` - iTerm2 terminal configuration
+  - `gh-dash/` - GitHub dashboard configuration
+  - `tms/` - Tmux session manager configuration
 
 ## Features
 
@@ -61,6 +71,8 @@ Personal configuration files for macOS development environment.
 ### What the Install Script Does
 
 - Creates symlinks from `~/` to `~/dotfiles/` for all configuration files
+- Creates symlinks from `~/.config/` to `~/dotfiles/config/` for application configs
+- Initializes git submodules (including nvim config)
 - Backs up existing files to `~/dotfiles_backup_TIMESTAMP/`
 - Copies `.secrets.template` to `~/.secrets` (if it doesn't exist)
 - Preserves your existing configuration safely
@@ -103,6 +115,7 @@ You may need to comment these out or update the paths for your environment.
 
 - **NEVER** commit the actual `.secrets` file - it's in `.gitignore`
 - The `.secrets.template` contains only placeholder values
+- Sensitive `.config` directories (gcloud, gh, github-copilot, atuin, etc.) are excluded via `.gitignore`
 - Review all API keys and tokens before committing changes
 - Consider using a password manager for sensitive credentials
 
@@ -119,9 +132,20 @@ git push
 
 Changes will be immediately reflected in your home directory via symlinks.
 
-## Related Repositories
+## Git Submodules
 
-- Neovim configuration: [nvim repository]
+This repository uses git submodules for certain configurations:
+
+- `config/nvim` - Links to [or-priesender/nvim](https://github.com/or-priesender/nvim)
+
+To update submodules:
+```bash
+cd ~/dotfiles
+git submodule update --remote
+git add config/nvim
+git commit -m "Update nvim submodule"
+git push
+```
 
 ## License
 

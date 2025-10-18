@@ -1,0 +1,120 @@
+# -----------------------------------------------------------------------------
+# K9s Gruvbox Dark Skin - Updated to match Alacritty Gruvbox theme
+# Author: [@indiebrain](https://github.com/indiebrain) - Enhanced for consistency
+# -----------------------------------------------------------------------------
+
+# Styles - Colors matching Alacritty Gruvbox theme exactly
+foreground: &foreground "#ebdbb2"
+background: &background "#282828"
+current_line: &current_line "#504945"
+selection: &selection "#504945"
+comment: &comment "#928374"
+cyan: &cyan "#689d6a"
+green: &green "#98971a"
+orange: &orange "#d79921"
+magenta: &magenta "#b16286"
+blue: &blue "#458588"
+red: &red "#cc241d"
+bright_red: &bright_red "#fb4934"
+bright_green: &bright_green "#b8bb26"
+bright_yellow: &bright_yellow "#fabd2f"
+bright_blue: &bright_blue "#83a598"
+bright_magenta: &bright_magenta "#d3869b"
+bright_cyan: &bright_cyan "#8ec07c"
+accent_orange: &accent_orange "#fe8019"
+
+k9s:
+  body:
+    fgColor: *foreground
+    bgColor: *background
+    logoColor: *bright_blue
+  prompt:
+    fgColor: *foreground
+    bgColor: *background
+    suggestColor: *bright_yellow
+  info:
+    fgColor: *bright_magenta
+    sectionColor: *foreground
+  help:
+    fgColor: *foreground
+    bgColor: *background
+    keyColor: *bright_magenta
+    numKeyColor: *bright_blue
+    sectionColor: *bright_green
+  dialog:
+    fgColor: *foreground
+    bgColor: *background
+    buttonFgColor: *foreground
+    buttonBgColor: *magenta
+    buttonFocusFgColor: *background
+    buttonFocusBgColor: *bright_cyan
+    labelFgColor: *bright_yellow
+    fieldFgColor: *foreground
+  frame:
+    border:
+      fgColor: *comment
+      focusColor: *bright_blue
+    menu:
+      fgColor: *foreground
+      keyColor: *bright_magenta
+      numKeyColor: *bright_blue
+    crumbs:
+      fgColor: *foreground
+      bgColor: *current_line
+      activeColor: *bright_blue
+    status:
+      newColor: *bright_cyan
+      modifyColor: *bright_yellow
+      addColor: *bright_green
+      errorColor: *bright_red
+      highlightColor: *accent_orange
+      killColor: *comment
+      completedColor: *comment
+    title:
+      fgColor: *foreground
+      bgColor: *background
+      highlightColor: *accent_orange
+      counterColor: *bright_blue
+      filterColor: *bright_magenta
+  views:
+    charts:
+      bgColor: *background
+      defaultDialColors:
+        - *bright_blue
+        - *bright_red
+        - *bright_green
+        - *bright_yellow
+        - *bright_magenta
+        - *bright_cyan
+      defaultChartColors:
+        - *bright_blue
+        - *bright_red
+        - *bright_green
+        - *bright_yellow
+        - *bright_magenta
+        - *bright_cyan
+    table:
+      fgColor: *foreground
+      bgColor: *background
+      cursorFgColor: *background
+      cursorBgColor: *current_line
+      header:
+        fgColor: *bright_yellow
+        bgColor: *background
+        sorterColor: *bright_blue
+    xray:
+      fgColor: *foreground
+      bgColor: *background
+      cursorColor: *current_line
+      graphicColor: *bright_blue
+      showIcons: false
+    yaml:
+      keyColor: *bright_magenta
+      colonColor: *bright_blue
+      valueColor: *foreground
+    logs:
+      fgColor: *foreground
+      bgColor: *background
+      indicator:
+        fgColor: *bright_cyan
+        bgColor: *background
