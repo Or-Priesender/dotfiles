@@ -1,0 +1,109 @@
+# --- GIT --- #
+
+# show a summary of 3 last commits
+lg() {
+    git --no-pager log --decorate=short --oneline -n${1-5}
+}
+
+load_env_file() {
+if [ -f $1 ]; then
+    # Load Environment Variables
+    export $(cat $1 | grep -v '#' | sed 's/\r$//' | awk '/=/ {print $1}' )
+fi
+}
+
+alias fm="git status --porcelain | grep '^ M' | awk 'NR==1{print $2}'"
+
+unalias g
+
+# SYSTEM
+alias reload='source ~/.zshrc'
+alias vim='nvim'
+
+whoseport() {
+        lsof -nPi:$1 -sTCP:LISTEN
+}
+
+
+# K8
+alias kubectl='kubecolor'
+alias k='kubectl'
+alias ctx='kubectx'
+alias k8s='nvim +"lua require(\"kubectl\").open()"'
+alias k9='k9s --context'
+
+# TORQ
+accounts_file="$HOME/dev/tmp/accounts.csv"
+tq-dump-all-accounts () {
+    project=${1:-"stackpulse-production"}
+    accounts_file_backup="$HOME/dev/tmp/accounts.csv.bk"
+    cp $accounts_file $accounts_file_backup
+    query=$(cat << EOF
+    SELECT
+      o.name AS organization_name,
+      a.short_name AS account_short_name,
+      a.name AS account_name,
+      a.id AS account_id,
+      o.id AS organization_id
+    FROM
+      $project.bi.dim_accounts a
+    LEFT JOIN
+      $project.bi.dim_orgs o
+    ON
+      o.id = a.organization_id
+    ORDER BY
+      o.id DESC
+EOF
+    )
+    tmp_accounts_file="/tmp/accounts.tmp.json"
+    bq query --format=prettyjson --use_legacy_sql=false --max_rows 10000 $query 2> /dev/null > $tmp_accounts_file
+    cat $tmp_accounts_file | jq -r '.[] | [
+        "organization_name:" + .organization_name,
+        "account_short_name:" + .account_short_name,
+        "account_name:" + .account_name,
+        "account_id:" + .account_id,
+        "organization_id:" + .organization_id
+    ] | @csv' | sort | tr -d '"' > $accounts_file
+}
+
+tq-whois () {
+    # Try initial grep
+    result=$(grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox} "$1" $accounts_file)
+
+    # If no results found, refresh the data and try again
+    if [ -z "$result" ]; then
+        echo "No results found, refreshing data..."
+        tq-dump-all-accounts
+        result=$(grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox} "$1" $accounts_file)
+    fi
+
+    # Format and output the results
+    if [ ! -z "$result" ]; then
+        echo "$result" | while IFS=, read -r org acc_short acc_name acc_id org_id; do
+            echo "----------------------------------------"
+            echo "Organization Name: ${org#organization_name:}"
+            echo "Account Short Name: ${acc_short#account_short_name:}"
+            echo "Account Name: ${acc_name#account_name:}"
+            echo "Account ID: ${acc_id#account_id:}"
+            echo "Organization ID: ${org_id#organization_id:}"
+        done
+        echo "----------------------------------------"
+    else
+        echo "No results found."
+    fi
+}
+
+pubsub-pull() {
+  while true; do gcloud pubsub subscriptions pull $1 --limit 10 --format=text | tee -a messages.txt | fgrep message.data | wc -l; done
+}
+
+
+bq-fetch-workflow() {
+  project=$1
+  workflow_id=$2
+  fetch_wf_output_path=/tmp/fetch-wf-${workflow_id}.output
+  query="SELECT data FROM $project.bi.dim_workflow_revisions  WHERE workflow_id = '${workflow_id}' ORDER BY created_at DESC LIMIT 1"
+  echo "fetching workflow into: $fetch_wf_output_path"
+  bq query --format=prettyjson --use_legacy_sql=false $query 2>/dev/null | jq '.[0].data' -r >$fetch_wf_output_path
+  cat $fetch_wf_output_path | yq -r -P - | vim -
+} 

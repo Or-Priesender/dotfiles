@@ -1,0 +1,38 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Or-Priesender
+	email = or.priesender@torq.io
+[core]
+    excludesfile = get
+    autocrlf = input
+    attributesfile = /Users/orp/.gitattributes
+	pager = diff-so-fancy | less --tabs=4 -RF
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	amend = commit --amend --no-edit
+  lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold red)%d%C(reset) %C(dim white)- %an%C(reset)'
+[diff "sopsdiffer"]
+	textconv = sops -d
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[push]
+	autoSetupRemote = true
+	autoSetupRemote = true
+	default = current
+[pull]
+	autoSetupRemote = true
+  default = current
+  ff = only
+[credential]
+	helper = store
+	helper =
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+[url "https://"]
+	insteadOf = git://

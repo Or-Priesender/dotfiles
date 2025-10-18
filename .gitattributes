@@ -1,0 +1,2 @@
+*.sops.yaml diff=sopsdiffer show=sopsdiffer
+.envenc diff=sopsdiffer show=sopsdiffer
