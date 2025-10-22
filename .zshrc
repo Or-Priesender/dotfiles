@@ -145,7 +145,7 @@ esac
 
 # Auto-start tmux if not already running
 if [ -z "$TMUX" ] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$INSIDE_EMACS" ]; then
-  exec tmux
+  exec tmux new-session -A -s default
 fi
 
 # Create k9s tmux session if it doesn't exist
