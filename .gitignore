@@ -1,34 +1,19 @@
 # Never commit actual secrets
 .secrets
 
-# Local configuration overrides
+# Local overrides and backups
 *.local
-
-# Backup files
 *.backup
 *.bak
 *~
 
-# OS files
+# OS and editor files
 .DS_Store
-Thumbs.db
-
-# Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Sensitive .config directories (contain credentials/tokens/state)
-config/gcloud/
-config/gh/
-config/github-copilot/
-config/atuin/
-config/configstore/
-config/git/
-config/raycast/
-config/telepresence/
-config/jgit/
-
-# Socket files
+# Runtime state
 *.socket
+*.lock

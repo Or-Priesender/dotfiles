@@ -1,0 +1,33 @@
+# --- GIT --- #
+
+# show a summary of 3 last commits
+lg() {
+    git --no-pager log --decorate=short --oneline -n${1-5}
+}
+
+load_env_file() {
+if [ -f $1 ]; then
+    # Load Environment Variables
+    export $(cat $1 | grep -v '#' | sed 's/\r$//' | awk '/=/ {print $1}' )
+fi
+}
+
+alias fm="git status --porcelain | grep '^ M' | awk 'NR==1{print $2}'"
+
+unalias g
+
+# SYSTEM
+alias reload='source ~/.zshrc'
+alias vim='nvim'
+
+whoseport() {
+        lsof -nPi:$1 -sTCP:LISTEN
+}
+
+
+# K8
+alias kubectl='kubecolor'
+alias k='kubectl'
+alias ctx='kubectx'
+alias k8s='nvim +"lua require(\"kubectl\").open()"'
+alias k9='k9s --context'

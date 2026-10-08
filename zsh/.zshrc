@@ -1,3 +1,12 @@
+# Auto-start tmux if not already running. Kept first, so the rest only loads inside tmux.
+# Embedded/agent terminals (Orca, VS Code, ...) opt out so they don't attach to
+# the shared "default" session.
+if [ -z "$TMUX" ] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] \
+  && [ -z "$INSIDE_EMACS" ] && [ -z "$NO_AUTO_TMUX" ] && [ -z "$ORCA_PANE_KEY" ] \
+  && [[ "$TERM_PROGRAM" != "Orca" ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  exec tmux new-session -A -s default
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -114,11 +123,18 @@ if [ -f '/Users/orp/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/orp/g
 export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 export XDG_CONFIG_HOME="/Users/orp/.config"
 export GOPROXY=https://proxy.golang.org,direct
-export GOPRIVATE=github.com/torqio,stackpulse.dev,torqio.dev
 export PATH="$PATH:$HOME/go/bin:$HOME/.scripts"
 export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# nvm.sh costs ~1.7s per shell: put the default node on PATH now, load nvm on first `nvm` call.
+_nvm_default=($NVM_DIR/versions/node/v${$(<$NVM_DIR/alias/default)}*(N/nOn))
+[ -n "$_nvm_default" ] && export PATH="$_nvm_default[1]/bin:$PATH"
+unset _nvm_default
+nvm() {
+  unfunction nvm
+  \. /opt/homebrew/opt/nvm/nvm.sh
+  \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
+  nvm "$@"
+}
 
 # Switch tilda and +- in keyboard
 hidutil property --set '{"UserKeyMapping": [{"HIDKeyboardModifierMappingSrc": 0x700000064, "HIDKeyboardModifierMappingDst": 0x700000035}, {"HIDKeyboardModifierMappingSrc": 0x700000035, "HIDKeyboardModifierMappingDst": 0x700000035}]}'  >/dev/null 2>&1
@@ -126,14 +142,13 @@ export PATH="$PATH:/opt/homebrew/bin/python3.9/bin"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-eval "$(zoxide init --cmd cd zsh)"
 
 # Disable press and hold so I can move quickly in ideavim
 defaults write -g ApplePressAndHoldEnabled -bool false
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
-source "/Users/orp/dev/app/local_env/app_dotfile.sh"
+[ -f ~/.torq.zsh ] && source ~/.torq.zsh
 
 # pnpm
 export PNPM_HOME="/Users/orp/Library/pnpm"
@@ -143,18 +158,8 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# Auto-start tmux if not already running
-if [ -z "$TMUX" ] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$INSIDE_EMACS" ]; then
-  exec tmux new-session -A -s default
-fi
+# kickstart nvim
+export NVIM_APPNAME="nvimk"
+export PATH="$HOME/.local/bin:$PATH"
 
-# Create k9s tmux session if it doesn't exist
-if ! tmux has-session -t k9s 2>/dev/null; then
-    tmux new-session -d -s k9s k9s
-fi
-
-# Create default tmux session if it doesn't exist
-if ! tmux has-session -t default 2>/dev/null; then
-    tmux new-session -d -s default -c ~
-fi
-
+eval "$(zoxide init --cmd cd zsh)"

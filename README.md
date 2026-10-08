@@ -1,152 +1,50 @@
 # Dotfiles
 
-Personal configuration files for macOS development environment.
+macOS configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-## Contents
+Each top-level folder is a Stow package. Its content mirrors `$HOME`, and Stow links it into place.
+The real files live in this repo, and `$HOME` has only symlinks, so edits go straight into git.
 
-- `.zshrc` - Zsh shell configuration with oh-my-zsh
-- `.aliases` - Custom shell aliases and functions
-- `.gitconfig` - Git configuration and aliases
-- `.gitattributes` - Git attributes configuration
-- `.secrets.template` - Template for environment variables (API keys, tokens)
-- `install.sh` - Installation script that creates symlinks
-- `config/` - Application configuration directories from `~/.config/`
-  - `nvim/` - Neovim configuration (git submodule)
-  - `tmux/` - Tmux configuration
-  - `k9s/` - Kubernetes UI configuration
-  - `lazygit/` - LazyGit configuration
-  - `aerospace/` - Window manager configuration
-  - `sketchybar/` - macOS status bar configuration
-  - `iterm2/` - iTerm2 terminal configuration
-  - `gh-dash/` - GitHub dashboard configuration
-  - `tms/` - Tmux session manager configuration
+| Package | Links |
+|---|---|
+| `zsh` | `~/.zshrc`, `~/.aliases` |
+| `git` | `~/.gitconfig`, `~/.gitconfig-torq`, `~/.gitattributes`, `~/.config/git` |
+| `tmux` | `~/.config/tmux` |
+| `ghostty` | `~/.config/ghostty` |
+| `nvim` | `~/.config/nvimk` ([kickstart.nvim fork](https://github.com/Or-Priesender/kickstart.nvim), git submodule, used via `NVIM_APPNAME=nvimk`) |
+| `sketchybar` | `~/.config/sketchybar` |
+| `k9s` | `~/.config/k9s` |
 
-## Features
+`Brewfile` lists all Homebrew packages. It is not a Stow package.
 
-### Zsh Configuration
-- oh-my-zsh with robbyrussell theme
-- Plugins: cmdtime, git, zsh-autosuggestions
-- Auto-start tmux on shell start
-- Auto-create tmux sessions (default, k9s)
-- Zoxide for smart directory navigation
-- fzf for fuzzy finding
-
-### Git Configuration
-- User: Or-Priesender
-- Useful aliases: co, br, ci, st, amend, lg
-- diff-so-fancy for better diffs
-- Auto-setup remote branches on push/pull
-
-### Custom Aliases
-- Git shortcuts and helpers
-- Kubernetes aliases (k, ctx, k8s, k9)
-- Torq-specific utilities (tq-whois, tq-dump-all-accounts, bq-fetch-workflow)
-- System utilities (reload, vim -> nvim, whoseport)
-
-## Installation
-
-### First Time Setup
-
-1. Clone this repository:
-   ```bash
-   git clone <your-repo-url> ~/dotfiles
-   cd ~/dotfiles
-   ```
-
-2. Run the installation script:
-   ```bash
-   ./install.sh
-   ```
-
-3. Edit `~/.secrets` with your actual API keys:
-   ```bash
-   vim ~/.secrets
-   ```
-
-4. Reload your shell:
-   ```bash
-   source ~/.zshrc
-   ```
-
-### What the Install Script Does
-
-- Creates symlinks from `~/` to `~/dotfiles/` for all configuration files
-- Creates symlinks from `~/.config/` to `~/dotfiles/config/` for application configs
-- Initializes git submodules (including nvim config)
-- Backs up existing files to `~/dotfiles_backup_TIMESTAMP/`
-- Copies `.secrets.template` to `~/.secrets` (if it doesn't exist)
-- Preserves your existing configuration safely
-
-## Prerequisites
-
-### Required
-- Zsh shell
-- oh-my-zsh
-- Git
-
-### Recommended
-- tmux
-- neovim
-- fzf
-- zoxide
-- diff-so-fancy
-- zsh-syntax-highlighting
-- zsh-autosuggestions
-- kubecolor (for Kubernetes aliases)
-
-### Installation Commands
-```bash
-# Install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# Install with Homebrew
-brew install tmux neovim fzf zoxide diff-so-fancy zsh-syntax-highlighting zsh-autosuggestions kubecolor
-```
-
-## Machine-Specific Configuration
-
-The `.zshrc` references some machine-specific paths that may not exist on all machines:
-- `~/dev/personal/gpt-shell/install.sh` (line 80)
-- `/Users/orp/dev/app/local_env/app_dotfile.sh` (line 136)
-
-You may need to comment these out or update the paths for your environment.
-
-## Security Notes
-
-- **NEVER** commit the actual `.secrets` file - it's in `.gitignore`
-- The `.secrets.template` contains only placeholder values
-- Sensitive `.config` directories (gcloud, gh, github-copilot, atuin, etc.) are excluded via `.gitignore`
-- Review all API keys and tokens before committing changes
-- Consider using a password manager for sensitive credentials
-
-## Updating
-
-After making changes to files in `~/dotfiles/`:
+## Install
 
 ```bash
-cd ~/dotfiles
-git add .
-git commit -m "Update configuration"
-git push
+git clone --recurse-submodules https://github.com/Or-Priesender/dotfiles.git ~/dotfiles
+~/dotfiles/install.sh
 ```
 
-Changes will be immediately reflected in your home directory via symlinks.
+The script installs the Brewfile, links all packages and creates `~/.secrets` from `.secrets.template`.
+Stow does not overwrite real files. If a target exists, move it away first.
 
-## Git Submodules
+## Daily use
 
-This repository uses git submodules for certain configurations:
-
-- `config/nvim` - Links to [or-priesender/nvim](https://github.com/or-priesender/nvim)
-
-To update submodules:
 ```bash
-cd ~/dotfiles
-git submodule update --remote
-git add config/nvim
-git commit -m "Update nvim submodule"
-git push
+# Add a new config (example: lazygit)
+mkdir -p ~/dotfiles/lazygit/.config
+mv ~/.config/lazygit ~/dotfiles/lazygit/.config/
+stow -d ~/dotfiles -t ~ lazygit
+
+# Update the Brewfile after installing or removing packages
+brew bundle dump --file=~/dotfiles/Brewfile --force
+
+# Remove the links of a package
+stow -d ~/dotfiles -t ~ -D k9s
 ```
 
-## License
+Neovim changes are committed in the submodule first, then the new submodule commit in this repo.
 
-Personal configuration files - use at your own risk!
+## Secrets
+
+This repo is public. Secrets go in `~/.secrets` (git-ignored, sourced by `.zshrc`).
+Torq work config is in `~/.torq.zsh` (sourced by `.zshrc` if it exists), with `~/.gcloud-aliases` and `~/.scripts`. These are not in this repo. Copy them manually to a new machine.
