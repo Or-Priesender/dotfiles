@@ -86,7 +86,7 @@ zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
-source ~/dev/personal/gpt-shell/install.sh
+[ -f ~/dev/personal/gpt-shell/install.sh ] && source ~/dev/personal/gpt-shell/install.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -113,7 +113,7 @@ source ~/dev/personal/gpt-shell/install.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.aliases
-source ~/.secrets
+[ -f ~/.secrets ] && source ~/.secrets
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/orp/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/orp/google-cloud-sdk/path.zsh.inc'; fi

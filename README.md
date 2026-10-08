@@ -7,7 +7,7 @@ The real files live in this repo, and `$HOME` has only symlinks, so edits go str
 
 | Package | Links |
 |---|---|
-| `zsh` | `~/.zshrc`, `~/.aliases` |
+| `zsh` | `~/.zshrc`, `~/.zprofile`, `~/.aliases` |
 | `git` | `~/.gitconfig`, `~/.gitconfig-torq`, `~/.gitattributes`, `~/.config/git` |
 | `tmux` | `~/.config/tmux` |
 | `ghostty` | `~/.config/ghostty` |
@@ -17,15 +17,17 @@ The real files live in this repo, and `$HOME` has only symlinks, so edits go str
 
 `Brewfile` lists all Homebrew packages. It is not a Stow package.
 
-## Install
+## Install on a new Mac
 
 ```bash
-git clone --recurse-submodules https://github.com/Or-Priesender/dotfiles.git ~/dotfiles
-~/dotfiles/install.sh
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Or-Priesender/dotfiles/main/install.sh)"
 ```
 
-The script installs the Brewfile, links all packages and creates `~/.secrets` from `.secrets.template`.
-Stow does not overwrite real files. If a target exists, move it away first.
+The script installs Homebrew, clones this repo to `~/dotfiles`, installs the Brewfile, oh-my-zsh and its plugins,
+moves existing files to `~/.dotfiles-backup-<date>`, links all packages and creates `~/.secrets` from the template.
+It is safe to run again.
+
+After it finishes, fill in `~/.secrets` and copy the Torq files from the old Mac (see [Secrets](#secrets)).
 
 ## Daily use
 
