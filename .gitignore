@@ -17,3 +17,6 @@
 # Runtime state
 *.socket
 *.lock
+
+# tmux plugins (installed by TPM)
+tmux/.config/tmux/plugins/

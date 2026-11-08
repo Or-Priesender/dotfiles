@@ -45,6 +45,10 @@ for pkg in "${PACKAGES[@]}"; do
 done
 stow --dir="$DOTFILES_DIR" --target="$HOME" --restow "${PACKAGES[@]}"
 
+TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+[ -d "$TPM_DIR" ] || git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+"$TPM_DIR/bin/install_plugins" || echo "WARNING: tmux plugins did not install, run prefix + I in tmux."
+
 if [ ! -f "$HOME/.secrets" ]; then
     cp "$DOTFILES_DIR/.secrets.template" "$HOME/.secrets"
     chmod 600 "$HOME/.secrets"
@@ -56,3 +60,5 @@ echo "Done. Next steps:"
 echo "  1. Fill in ~/.secrets"
 echo "  2. Copy the Torq files from the old Mac: ~/.torq.zsh ~/.gcloud-aliases ~/.scripts/"
 echo "  3. Run 'exec zsh'"
+echo "  4. In Claude Code: /plugin marketplace add Or-Priesender/tmux-agent-status"
+echo "     then /plugin install tmux-agent-status@tmux-agent-status"
