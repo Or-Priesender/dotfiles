@@ -1,2 +1,7 @@
 renderer = software
-theme = GitHub-Dark-Dimmed
+theme = GruvboxDark
+foreground = #adbac7
+palette = 7=#909dab
+palette = 15=#cdd9e5
+cursor-color = #adbac7
+selection-foreground = #adbac7
