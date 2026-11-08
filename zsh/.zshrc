@@ -163,6 +163,3 @@ export NVIM_APPNAME="nvimk"
 export PATH="$HOME/.local/bin:$PATH"
 
 eval "$(zoxide init --cmd cd zsh)"
-
-# Added by the Postman CLI installer
-export PATH='/Users/orp/.local/bin':"$PATH"
