@@ -5,7 +5,7 @@ set -euo pipefail
 
 DOTFILES_DIR="$HOME/dotfiles"
 REPO_URL="https://github.com/Or-Priesender/dotfiles.git"
-PACKAGES=(zsh git tmux ghostty nvim sketchybar k9s)
+PACKAGES=(zsh git tmux ghostty nvim sketchybar k9s claude)
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
 if [ ! -x /opt/homebrew/bin/brew ]; then
@@ -32,9 +32,9 @@ done
 # Stow does not overwrite real files, so move them out of the way first.
 mkdir -p "$HOME/.config"
 for pkg in "${PACKAGES[@]}"; do
-    for src in "$DOTFILES_DIR/$pkg"/.[!.]* "$DOTFILES_DIR/$pkg"/.config/*; do
+    for src in "$DOTFILES_DIR/$pkg"/.[!.]* "$DOTFILES_DIR/$pkg"/.config/* "$DOTFILES_DIR/$pkg"/.claude/*; do
         [ -e "$src" ] || continue
-        [ "$(basename "$src")" = ".config" ] && continue
+        case "$(basename "$src")" in .config|.claude) continue ;; esac
         target="$HOME/${src#"$DOTFILES_DIR/$pkg/"}"
         if [ -e "$target" ] && [ ! -L "$target" ]; then
             mkdir -p "$BACKUP_DIR"

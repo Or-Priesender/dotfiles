@@ -14,6 +14,7 @@ The real files live in this repo, and `$HOME` has only symlinks, so edits go str
 | `nvim` | `~/.config/nvimk` ([kickstart.nvim fork](https://github.com/Or-Priesender/kickstart.nvim), git submodule, used via `NVIM_APPNAME=nvimk`) |
 | `sketchybar` | `~/.config/sketchybar` |
 | `k9s` | `~/.config/k9s` |
+| `claude` | `~/.claude/statusline.sh`, `~/.claude/themes` (Claude Code status line and gruvbox theme). `settings.json` is not here, because it has Torq data. |
 
 `Brewfile` lists all Homebrew packages. It is not a Stow package.
 
