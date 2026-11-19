@@ -181,8 +181,23 @@ rex.action{
 rex.action{
   name = "new_session",
   title = "New Session Here",
-  args = { cwd = "string?", rename = "boolean?" },
+  args = { cwd = "string?", ask_name = "boolean?" },
   run = function(ctx, args)
+    local cwd = args.cwd or pwd(ctx.block_id)
+    -- rex.ui.input needs a newer server, so ask for the name in a floating pane.
+    if args.ask_name then
+      observe(ctx)
+      local _, err = rex.session.new_layer{
+        bounds = { 0.3, 0.4, 0.4, 0.12 },
+        focus = true,
+        layout = rex.layout.block{
+          flavor = SHELL,
+          options = { command = { CONFIG_DIR .. "/scripts/new-session.sh", ctx.client_id or "", cwd } },
+        },
+      }
+      if err then error(err, 0) end
+      return
+    end
     local r, err = rex.call("session.create", {
       initial_windows = { {
         layout = rex.layout.block{ flavor = SHELL, options = { cwd = args.cwd or pwd(ctx.block_id) } },
@@ -190,11 +205,10 @@ rex.action{
     })
     if not r then error(err, 0) end
     switch_to(ctx, r.session_id)
-    if args.rename then rex.client.queue("session.rename") end
   end,
 }
 rex.bind("ctrl+b>c", "new_session")
-rex.bind("ctrl+b>n", "new_session", { cwd = HOME .. "/dev", rename = true })
+rex.bind("ctrl+b>n", "new_session", { cwd = HOME .. "/dev", ask_name = true })
 
 rex.bind("ctrl+b>shift+s", "session.switch")
 rex.bind("ctrl+b>w", "pane.view_activity")
