@@ -5,7 +5,7 @@ set -euo pipefail
 
 DOTFILES_DIR="$HOME/dotfiles"
 REPO_URL="https://github.com/Or-Priesender/dotfiles.git"
-PACKAGES=(zsh git tmux ghostty nvim sketchybar k9s claude)
+PACKAGES=(zsh git tmux ghostty nvim sketchybar k9s claude rex)
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
 if [ ! -x /opt/homebrew/bin/brew ]; then

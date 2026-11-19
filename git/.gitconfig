@@ -36,3 +36,5 @@
 	insteadOf = git@github.com:
 [url "https://"]
 	insteadOf = git://
+[credential "https://github.com"]
+	username = Or-Priesender

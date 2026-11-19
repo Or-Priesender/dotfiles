@@ -1,9 +1,10 @@
 # Auto-start tmux if not already running. Kept first, so the rest only loads inside tmux.
-# Embedded/agent terminals (Orca, VS Code, ...) opt out so they don't attach to
+# Embedded/agent terminals (Orca, VS Code, ...) and Rex (its own multiplexer) opt out so they don't attach to
 # the shared "default" session.
 if [ -z "$TMUX" ] && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] \
   && [ -z "$INSIDE_EMACS" ] && [ -z "$NO_AUTO_TMUX" ] && [ -z "$ORCA_PANE_KEY" ] \
-  && [[ "$TERM_PROGRAM" != "Orca" ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
+  && [[ "$TERM_PROGRAM" != "Orca" ]] && [[ "$TERM_PROGRAM" != "vscode" ]] \
+  && [[ "$TERM_PROGRAM" != "rex" ]]; then
   exec tmux new-session -A -s default
 fi
 
